@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mfa-auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mfa-auth-service
+  template:
+    metadata:
+      labels:
+        app: mfa-auth-service
+    spec:
+      containers:
+        - name: mfa-auth-service
+          image: mfa-auth-service:1.0.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
