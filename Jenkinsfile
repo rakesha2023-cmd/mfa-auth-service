@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk21'
-        maven 'maven3'
+        jdk 'JDK21'
+        maven 'Maven3'
     }
 
     stages {
@@ -13,22 +13,33 @@ pipeline {
             }
         }
 
-        stage('Build and Test') {
+        stage('Build') {
             steps {
-                bat 'mvn clean test package'
+                bat 'mvn clean compile'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Test') {
+            steps {
+                bat 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                bat 'mvn clean package'
+            }
+        }
+
+        stage('Docker Build') {
             steps {
                 bat 'docker build -t mfa-auth-service:1.0.0 .'
             }
-        }
-    }
-
-    post {
-        always {
-            junit 'target/surefire-reports/*.xml'
         }
     }
 }
